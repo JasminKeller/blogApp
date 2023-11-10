@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
-class BlogCard extends StatefulWidget {
-  const BlogCard({super.key});
+import '../entity/blog_entity.dart';
 
-  @override
-  State<BlogCard> createState() => _BlogCardState();
-}
+class BlogCard extends StatelessWidget {
+  final Blog blog;
 
-class _BlogCardState extends State<BlogCard> {
+  const BlogCard({super.key, required this.blog});
+
   @override
   Widget build(BuildContext context) {
-    return const Card(
-      child: Text('Card Text'),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              blog.title,
+              style: const TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(blog.content),
+          ],
+        ),
+      ),
     );
   }
 }
