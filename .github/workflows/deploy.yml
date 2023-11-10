@@ -1,0 +1,44 @@
+name: Deploy on Azure as Static Web App
+
+on: [workflow_dispatch]
+
+#on:
+#  push:
+#    branches:
+#      - main
+
+
+env:
+  RESSOURCE_GROUP: rg-blog-test
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Flutter Setup
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.3'
+          channel: 'stable'
+
+      - name: Install packages
+        run: |
+          flutter config --enable-web
+          flutter pub get
+
+      - name: Build Web
+        run: flutter build web --release
+
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_RIVER_0FB174D03 }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Dieses Token wird von GitHub bereitgestellt.
+          action: "upload"
+          ###### Repository/Projekt-Einstellungen ######
+          app_location: "build/web" # Ort, an dem sich deine App befindet
+          skip_app_build: true # Überspringt den Build-Prozess
