@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../entity/blog_entity.dart';
+import 'icon_with_counter_widget.dart';
 
 class BlogCard extends StatelessWidget {
   final Blog blog;
@@ -10,22 +11,35 @@ class BlogCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(6.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              blog.title,
-              style: const TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
+            ListTile(
+              title: Text(blog.title),
+              subtitle: Text(blog.contentPreview),
             ),
-            const SizedBox(height: 8.0),
-            Text(blog.content),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(blog.author),
+                  Row(
+                    children: [
+                      IconWithCounterWidget(icon: Icons.favorite, count: blog.likes),
+                      const SizedBox(width: 12),
+                      IconWithCounterWidget(icon: Icons.mode_comment, count: blog.comments)
+                    ],
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       ),
     );
   }
 }
+
+

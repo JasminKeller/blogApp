@@ -1,3 +1,4 @@
+import 'package:blogapp/services/blog_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../entity/blog_entity.dart';
@@ -13,20 +14,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Blog> blogs = [
-    Blog(title: 'Erster Blog', content: 'Inhalt des ersten Blogs'),
-    Blog(title: 'Zweiter Blog', content: 'Inhalt des zweiten Blogs'),
-  ];
 
-  void _addNewBlog(){
-    setState(() {
-      blogs.add(Blog(title: 'Neu erstellter Blog', content: 'Der Button funktionniert'));
-    });
+  final BlogRepository blogRepository = BlogRepository();
+
+  List<Blog>? blogs;
+
+  @override
+  void initState() {
+    super.initState();
+    blogs = blogRepository.getBlogs();
   }
 
   
   @override
   Widget build(BuildContext context) {
+    if (blogs==null){
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    if(blogs!.isEmpty){
+      return const Center(
+        child: Text('No blogs yet'),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -36,14 +48,20 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ListView.builder(
-          itemCount: blogs.length,
+          itemCount: blogs!.length,
           itemBuilder: (context, index) {
-            return BlogCard(blog: blogs[index]);
+            return BlogCard(blog: blogs![index]);
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addNewBlog,
+        onPressed: () {
+          Blog newBlog = Blog(title: 'Neu erstellter Blog', content: 'Inhalt des Neu erstellter Blog',contentPreview: 'ich bin die vorschau des Neu erstellter Blog', likes: 0, comments: 0, author: 'user@hftm.ch');
+          blogRepository.addNewBlog(newBlog);
+          setState(() {
+            blogs = blogRepository.getBlogs();
+          });
+        },
         child: const Icon(Icons.add),
       ),
     );
