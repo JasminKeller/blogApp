@@ -66,11 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
-        // centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
-        ),
        actions: [
          IconButton(
            icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
@@ -81,6 +76,38 @@ class _HomeScreenState extends State<HomeScreen> {
        ],
       ),
       body: _screens[_selectedIndex],
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(child: Text('Menu')),
+            ListTile(
+              title: Text('Home'),
+              selected: _selectedIndex == 0,
+              onTap: (){
+                _navigationBottomBar(0);
+                Navigator.pop(context);
+              }
+            ),
+            ListTile(
+                title: Text('Add New Blog'),
+                selected: _selectedIndex == 1,
+                onTap: (){
+                  _navigationBottomBar(1);
+                  Navigator.pop(context);
+                }
+            ),
+            ListTile(
+                title: Text('Settings'),
+                selected: _selectedIndex == 2,
+                onTap: (){
+                  _navigationBottomBar(2);
+                  Navigator.pop(context);
+                }
+            )
+          ],
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Blog newBlog = Blog(title: 'Neu erstellter Blog', content: 'Inhalt des Neu erstellter Blog',contentPreview: 'ich bin die vorschau des Neu erstellter Blog', likes: 0, comments: 0, author: 'user@hftm.ch');
