@@ -62,71 +62,80 @@ class _HomeScreenState extends State<HomeScreen> {
     bool isDarkMode = themeProvider.themeData == darkMode;
 
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-       actions: [
-         IconButton(
-           icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
-           onPressed: () {
-             Provider.of<ThemeProvider>(context, listen:false).toggleTheme();
-           },
-         )
-       ],
-      ),
-      body: _screens[_selectedIndex],
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(child: Text('Menu')),
-            ListTile(
-              title: Text('Home'),
-              selected: _selectedIndex == 0,
-              onTap: (){
-                _navigationBottomBar(0);
-                Navigator.pop(context);
-              }
-            ),
-            ListTile(
-                title: Text('Add New Blog'),
-                selected: _selectedIndex == 1,
+    return WillPopScope(
+      onWillPop: () async {
+        if (_selectedIndex == 0) {
+          return true;  // nur wenn man auf dem Homescreen ist darf mit dem zurück button auf andoid die app geschlossen werden.
+        } else {
+          return false;  // verhindert schliessen der App wenn man nicht auf dem HomeScreen ist
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+         actions: [
+           IconButton(
+             icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+             onPressed: () {
+               Provider.of<ThemeProvider>(context, listen:false).toggleTheme();
+             },
+           )
+         ],
+        ),
+        body: _screens[_selectedIndex],
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const DrawerHeader(child: Text('Menu')),
+              ListTile(
+                title: const Text('Home'),
+                selected: _selectedIndex == 0,
                 onTap: (){
-                  _navigationBottomBar(1);
+                  _navigationBottomBar(0);
                   Navigator.pop(context);
                 }
-            ),
-            ListTile(
-                title: Text('Settings'),
-                selected: _selectedIndex == 2,
-                onTap: (){
-                  _navigationBottomBar(2);
-                  Navigator.pop(context);
-                }
-            )
+              ),
+              ListTile(
+                  title: const Text('Add New Blog'),
+                  selected: _selectedIndex == 1,
+                  onTap: (){
+                    _navigationBottomBar(1);
+                    Navigator.pop(context);
+                  }
+              ),
+              ListTile(
+                  title: const Text('Settings'),
+                  selected: _selectedIndex == 2,
+                  onTap: (){
+                    _navigationBottomBar(2);
+                    Navigator.pop(context);
+                  }
+              )
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Blog newBlog = Blog(title: 'Neu erstellter Blog', content: 'Inhalt des Neu erstellter Blog',contentPreview: 'ich bin die vorschau des Neu erstellter Blog', likes: 0, comments: 0, author: 'user@hftm.ch');
+            blogRepository.addNewBlog(newBlog);
+            setState(() {
+              blogs = blogRepository.getBlogs();
+            });
+          },
+          child: const Icon(Icons.add),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _selectedIndex,
+          onTap: _navigationBottomBar,
+          items:  const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Add New Blog'),
+            BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Blog newBlog = Blog(title: 'Neu erstellter Blog', content: 'Inhalt des Neu erstellter Blog',contentPreview: 'ich bin die vorschau des Neu erstellter Blog', likes: 0, comments: 0, author: 'user@hftm.ch');
-          blogRepository.addNewBlog(newBlog);
-          setState(() {
-            blogs = blogRepository.getBlogs();
-          });
-        },
-        child: const Icon(Icons.add),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _selectedIndex,
-        onTap: _navigationBottomBar,
-        items:  const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Add New Blog'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
-        ],
       ),
     );
   }

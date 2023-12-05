@@ -48,7 +48,7 @@ class BlogCard extends StatelessWidget {
                   Text(blog.author),
                   Row(
                     children: [
-                      IconWithCounterWidget(icon: Icons.favorite, count: blog.likes),
+                      IconWithCounterWidget(icon: Icons.favorite_border_outlined, count: blog.likes),
                       const SizedBox(width: 12),
                       IconWithCounterWidget(icon: Icons.mode_comment, count: blog.comments)
                     ],
