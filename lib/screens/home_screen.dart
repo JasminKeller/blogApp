@@ -1,9 +1,12 @@
 import 'package:blogapp/screens/blogadd_screen.dart';
 import 'package:blogapp/screens/settings_screen.dart';
 import 'package:blogapp/services/blog_repository.dart';
+import 'package:blogapp/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../entity/blog_entity.dart';
+import '../theme/theme.dart';
 import '../widget/blog_card_widget.dart';
 import 'bloghome_screen.dart';
 
@@ -54,6 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
       BlogHomeScreen(blogs: blogs),BlogAddScreen(), SettingsScreen()
     ];
 
+    //  light and darkmode icon change
+    var themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDarkMode = themeProvider.themeData == darkMode;
+
 
     return Scaffold(
       appBar: AppBar(
@@ -66,12 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
        actions: [
          IconButton(
-           icon: const Icon(Icons.settings),
+           icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
            onPressed: () {
-             Navigator.push(
-                 context,
-                 MaterialPageRoute(builder: (context) => const SettingsScreen())
-             );
+             Provider.of<ThemeProvider>(context, listen:false).toggleTheme();
            },
          )
        ],

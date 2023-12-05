@@ -14,6 +14,7 @@ class BlogDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Text(title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -23,12 +24,8 @@ class BlogDetailPage extends StatelessWidget {
             child: Column(
               children: [
                 const Image(image: AssetImage('lib/assets/katze.jpg')),
-                ListTile(
-                  title: Text(title),
-                  subtitle: Text(author),
-                ),
                 Padding(
-                  padding: const EdgeInsets.all(0),
+                  padding: const EdgeInsets.all(8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

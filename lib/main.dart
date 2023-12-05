@@ -1,9 +1,13 @@
 import 'package:blogapp/screens/home_screen.dart';
+import 'package:blogapp/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(create: (context) => ThemeProvider(),
+    child: const MyApp())
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,26 +18,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Bloggy',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.indigo,
-            brightness: Brightness.dark,
-        ),
-        textTheme: TextTheme(
-          displayLarge: const TextStyle(
-            fontSize: 72,
-            fontWeight: FontWeight.bold,
-          ),
-          // ···
-          titleLarge: GoogleFonts.oswald(
-            fontSize: 30,
-            fontStyle: FontStyle.normal,
-          ),
-          bodyMedium: GoogleFonts.roboto(),
-          displaySmall: GoogleFonts.pacifico(),
-        ),
-        useMaterial3: true,
-      ),
+      // For Smartphone driven light/dark Mode
+      // theme: lightMode,
+      // darkTheme: darkMode,
+      theme: Provider.of<ThemeProvider>(context).themeData,
       home: const HomeScreen(title: 'Bloggy'),
     );
   }
