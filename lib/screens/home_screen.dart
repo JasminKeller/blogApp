@@ -1,14 +1,14 @@
-import 'package:blogapp/screens/blogadd_screen.dart';
+import 'package:blogapp/screens/blog_add_screen.dart';
 import 'package:blogapp/screens/settings_screen.dart';
 import 'package:blogapp/services/blog_repository.dart';
-import 'package:blogapp/theme/theme_provider.dart';
+import 'package:blogapp/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../entity/blog_entity.dart';
 import '../theme/theme.dart';
 import '../widget/blog_card_widget.dart';
-import 'bloghome_screen.dart';
+import 'blog_home_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -20,15 +20,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-  final BlogRepository blogRepository = BlogRepository();
-
   List<Blog>? blogs;
+
+  final BlogRepository blogRepository = BlogRepository.instance;
 
   @override
   void initState() {
     super.initState();
-    blogs = blogRepository.getBlogs();
+    _loadBlogs();
   }
 
   // BOTTOM NAV BAR https://www.youtube.com/watch?v=qk-a_Qgc6b0
@@ -38,6 +37,19 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> _loadBlogs() async {
+    var fetchedBlogs = await blogRepository.getBlogs();
+    setState(() {
+      blogs = fetchedBlogs;
+    });
+  }
+
+  Future<void> _addAndReloadBlogs() async {
+    Blog newBlog = Blog(id: 999, title: 'Neu erstellter Blog', content: 'Inhalt des Neu erstellter Blog', author: 'user@hftm.ch', publishedAt: DateTime.now());
+    await blogRepository.addBlog(newBlog);
+    await _loadBlogs();
   }
   
   @override
@@ -49,12 +61,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     if(blogs!.isEmpty){
       return const Center(
-        child: Text('No blogs yet'),
+        child: Text('No blogs yet'),  // TODO: show a nice "No Data" screen message what ever
       );
     }
 
     final List<Widget> _screens = [
-      BlogHomeScreen(blogs: blogs),BlogAddScreen(), SettingsScreen()
+      BlogHomeScreen(blogs: blogs!),BlogAddScreen(), SettingsScreen()
     ];
 
     //  light and darkmode icon change
@@ -117,13 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Blog newBlog = Blog(title: 'Neu erstellter Blog', content: 'Inhalt des Neu erstellter Blog',contentPreview: 'ich bin die vorschau des Neu erstellter Blog', likes: 0, comments: 0, author: 'user@hftm.ch');
-            blogRepository.addNewBlog(newBlog);
-            setState(() {
-              blogs = blogRepository.getBlogs();
-            });
-          },
+          onPressed: _addAndReloadBlogs,
           child: const Icon(Icons.add),
         ),
         bottomNavigationBar: BottomNavigationBar(

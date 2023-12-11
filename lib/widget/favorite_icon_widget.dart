@@ -1,35 +1,39 @@
 import 'package:flutter/material.dart';
 
-class FavoriteWidget extends StatefulWidget {
+class FavoriteIconWidget extends StatefulWidget {
   final int favoriteCount;
-  final int commentCount;
+  final bool isFavorited;
+  final ValueChanged<bool> onFavoriteChanged; // Callback
 
-  const FavoriteWidget({super.key, required this.favoriteCount, required this.commentCount});
+  const FavoriteIconWidget({
+    super.key,
+    required this.favoriteCount,
+    required this.isFavorited,
+    required this.onFavoriteChanged,
+  });
 
   @override
-  State<FavoriteWidget> createState() => _FavoriteWidgetState();
+  State<FavoriteIconWidget> createState() => _FavoriteIconWidgetState();
 }
 
-class _FavoriteWidgetState extends State<FavoriteWidget> {
+class _FavoriteIconWidgetState extends State<FavoriteIconWidget> {
 
   bool _isFavorited = false;
   int _favoriteCount = 0;
+
 
   @override
   void initState() {
     super.initState();
     _favoriteCount = widget.favoriteCount;
+    _isFavorited = widget.isFavorited;
   }
 
   void _toggleFavorite() {
     setState(() {
-      if (_isFavorited) {
-        _favoriteCount -= 1;
-        _isFavorited = false;
-      } else {
-        _favoriteCount += 1;
-        _isFavorited = true;
-      }
+      _isFavorited = !_isFavorited;
+      _favoriteCount = _isFavorited ? _favoriteCount + 1 : _favoriteCount - 1;
+      widget.onFavoriteChanged(_isFavorited); // Callback aufrufen
     });
   }
 
@@ -54,23 +58,6 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
           width: 30,
           child: SizedBox(
             child: Text('$_favoriteCount'),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(0),
-          child: IconButton(
-            padding: const EdgeInsets.all(0),
-            alignment: Alignment.centerRight,
-            icon: (_isFavorited
-                ? const Icon(Icons.mode_comment_outlined)
-                : const Icon(Icons.mode_comment_outlined)),
-            onPressed: _toggleFavorite,
-          ),
-        ),
-        SizedBox(
-          width: 6,
-          child: SizedBox(
-            child: Text('${widget.commentCount}'),
           ),
         ),
       ],

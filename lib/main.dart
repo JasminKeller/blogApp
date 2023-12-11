@@ -1,5 +1,5 @@
 import 'package:blogapp/screens/home_screen.dart';
-import 'package:blogapp/theme/theme_provider.dart';
+import 'package:blogapp/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
