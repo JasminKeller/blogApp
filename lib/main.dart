@@ -1,3 +1,4 @@
+import 'package:blogapp/providers/blog_provider.dart';
 import 'package:blogapp/screens/home_screen.dart';
 import 'package:blogapp/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,13 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(create: (context) => ThemeProvider(),
-    child: const MyApp())
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => BlogProvider()),
+      ],
+      child: const MyApp(),
+    ),
   );
 }
 

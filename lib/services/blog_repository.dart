@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../entity/blog_entity.dart';
 
-class BlogRepository extends ChangeNotifier{
+class BlogRepository {
   // Static instance + private Constructor for simple Singleton-approach - More here: https://jake-knowledge.notion.site/Singleton-approach-16525cbf251d4739871ecec7cd2913f3?pvs=4
   // Singleton-Muster: Stellt sicher, dass es nur eine Instanz der Klasse gibt
   static BlogRepository instance = BlogRepository._privateConstructor();
@@ -46,7 +46,6 @@ class BlogRepository extends ChangeNotifier{
       ),
     );
     _isInitialized = true;
-    notifyListeners();
   }
 
   Future<List<Blog>> getBlogs() async {
@@ -65,18 +64,15 @@ class BlogRepository extends ChangeNotifier{
     blog.likes = 0;
     blog.comments = 0;
     _blogs.add(blog);
-    notifyListeners();
   }
 
   Future<void> deleteBlog(Blog blog) async {
     _blogs.remove(blog);
-    notifyListeners();
   }
 
   Future<void> updateBlog({required int blogId, required String title, required String content}) async {
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
     blog.title = title;
     blog.content = content;
-    notifyListeners();
   }
 }
