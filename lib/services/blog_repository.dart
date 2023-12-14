@@ -27,7 +27,7 @@ class BlogRepository {
     );
     addBlog(
       Blog(id: 8889,
-          title: 'Zweiter Bloooooooooooooooooooog',
+          title: 'Zweiter Blog',
           content: 'Das ist der Vorschau.. wuhuuu... Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
           likes: 200,
           comments: 3,
@@ -37,7 +37,7 @@ class BlogRepository {
     );
     addBlog(
       Blog(id: 8890,
-          title: 'Dritter Bloooooooooooooooooooog',
+          title: 'Dritter Blog',
           content: 'Das ist der Vorschau.. wuhuuu... Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
           likes: 54,
           comments: 2,
@@ -61,8 +61,6 @@ class BlogRepository {
 
   Future<void> addBlog(Blog blog) async{
     blog.id = _nextId++;
-    blog.likes = 0;
-    blog.comments = 0;
     _blogs.add(blog);
   }
 
@@ -75,4 +73,5 @@ class BlogRepository {
     blog.title = title;
     blog.content = content;
   }
+
 }

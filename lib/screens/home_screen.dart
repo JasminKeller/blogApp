@@ -128,10 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+        /* FloatingActionButton no longer needed to add a simple blog entry
         floatingActionButton: FloatingActionButton(
           onPressed: _addAndReloadBlogs,
           child: const Icon(Icons.add),
         ),
+
+         */
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: _selectedIndex,

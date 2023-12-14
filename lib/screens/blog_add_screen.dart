@@ -37,7 +37,7 @@ class _BlogAddScreenState extends State<BlogAddScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Blog'),
+        title: const Text('Create New Blog'),
       ),
       body: Builder(builder: (context) {
         switch (pageStates) {

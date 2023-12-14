@@ -3,7 +3,6 @@ import 'package:blogapp/widget/comment_icon_widget.dart';
 import 'package:flutter/material.dart';
 import '../entity/blog_entity.dart';
 import 'favorite_icon_widget.dart';
-import 'icon_with_counter_widget.dart';
 
 class BlogCardWidget extends StatefulWidget {
   final Blog blog;
@@ -15,24 +14,6 @@ class BlogCardWidget extends StatefulWidget {
 }
 
 class _BlogCardWidgetState extends State<BlogCardWidget> {
-  late bool _isLikedByMe;
-  late int _likes;
-
-  @override
-  void initState() {
-    super.initState();
-    _isLikedByMe = widget.blog.isLikedByMe;
-    _likes = widget.blog.likes;
-  }
-
-  void _handleFavoriteChanged(bool isFavorited) {
-    setState(() {
-      _isLikedByMe = isFavorited;
-      _likes = isFavorited ? _likes + 1 : _likes - 1;
-      widget.blog.isLikedByMe = _isLikedByMe;
-      widget.blog.likes = _likes;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +34,7 @@ class _BlogCardWidgetState extends State<BlogCardWidget> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BlogDetailPage(
-                      title: widget.blog.title,
-                      content: widget.blog.content,
-                      author: widget.blog.author,
-                      likes: widget.blog.likes,
+                      blog: widget.blog,
                     ),
                   ),
                 );
@@ -74,9 +52,7 @@ class _BlogCardWidgetState extends State<BlogCardWidget> {
                   Row(
                     children: [
                       FavoriteIconWidget(
-                        favoriteCount: _likes,
-                        isFavorited: _isLikedByMe,
-                        onFavoriteChanged: _handleFavoriteChanged,
+                          blogId: widget.blog.id
                       ),
                       CommentIconWidget(commentCount: widget.blog.comments),
                     ],

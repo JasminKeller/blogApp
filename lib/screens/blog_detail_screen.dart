@@ -1,20 +1,18 @@
+import 'package:blogapp/widget/favorite_icon_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../widget/icon_with_counter_widget.dart';
+import '../entity/blog_entity.dart';
 
 class BlogDetailPage extends StatelessWidget {
-  final String title;
-  final String content;
-  final String author;
-  final int likes;
+  final Blog blog;
 
-  const BlogDetailPage({super.key, required this.title, required this.content, required this.author, required this.likes});
+  const BlogDetailPage({super.key, required this.blog});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(blog.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -29,12 +27,12 @@ class BlogDetailPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(author),
-                      IconWithCounterWidget(icon: Icons.favorite, count: likes),
+                      Text(blog.author),
+                      FavoriteIconWidget(blogId: blog.id),
                     ],
                   ),
                 ),
-                Text(content)
+                Text(blog.content)
               ],
             ),
           ),

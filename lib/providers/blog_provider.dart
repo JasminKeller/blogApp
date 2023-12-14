@@ -12,11 +12,13 @@ class BlogProvider extends ChangeNotifier {
   List<Blog> get blogs => _blogs;
 
   BlogProvider() {
-
+    _startRefreshTimer();
+    readBlogsWithLoadingState();
   }
 
   void _startRefreshTimer() {
-    Timer.periodic(const Duration(seconds: 3), (timer) {
+    Timer.periodic(const Duration(seconds: 15), (timer) {
+      print('RefreshTimer Triggered');
       readBlogs();
     });
   }
@@ -36,7 +38,12 @@ class BlogProvider extends ChangeNotifier {
     }
   }
 
-
-
+  Future<void> toggleLikeInfo(int blogId) async {
+    print('toggleLikeInfo Triggered from BlogProvider');
+    final blog = _blogs.firstWhere((blog) => blog.id == blogId);
+    blog.isLikedByMe = !blog.isLikedByMe;
+    blog.likes += blog.isLikedByMe ? 1 : -1;
+    notifyListeners();
+  }
 
 }
