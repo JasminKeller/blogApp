@@ -17,7 +17,7 @@ class BlogProvider extends ChangeNotifier {
   }
 
   void _startRefreshTimer() {
-    Timer.periodic(const Duration(seconds: 15), (timer) {
+    Timer.periodic(const Duration(seconds: 60), (timer) {
       print('RefreshTimer Triggered');
       readBlogs();
     });

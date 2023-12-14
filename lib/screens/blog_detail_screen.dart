@@ -27,6 +27,14 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
     _contentController.text = widget.blog.content;
   }
 
+  bool _validateTitle() {
+    return _titleController.text.length >= 4;
+  }
+
+  bool _validateContent() {
+    return _contentController.text.length >= 10;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +44,18 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
             icon: Icon(_isEditing ? Icons.check : Icons.edit),
             onPressed: () async {
               if (_isEditing) {
+                if (!_validateTitle()) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Please enter title with 4 or more characters'),
+                  ));
+                  return;
+                }
+                if (!_validateContent()) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Please enter content with 10 or more characters'),
+                  ));
+                  return;
+                }
                 await BlogRepository.instance.updateBlog(
                   blogId: widget.blog.id,
                   title: _titleController.text,
