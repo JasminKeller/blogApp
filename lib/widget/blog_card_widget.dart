@@ -28,7 +28,7 @@ class _BlogCardWidgetState extends State<BlogCardWidget> {
               title: Text(widget.blog.title),
               subtitle: Text(widget.blog.contentPreview),
               trailing: const Icon(Icons.navigate_next),
-              dense: true,
+              // dense: true,
               onTap: () {
                 Navigator.push(
                   context,

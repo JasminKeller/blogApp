@@ -25,10 +25,10 @@ class BlogProvider extends ChangeNotifier {
 
   Future<void> readBlogsWithLoadingState() async {
     isLoading = true;
-    notifyListeners();     // Beobachter werden benachrichtigt das der Zustand geändert hat
+    notifyListeners();
     await readBlogs(withNotifying: false);
     isLoading = false;
-    notifyListeners();    // Beobachter werden benachrichtigt das der Zustand geändert hat
+    notifyListeners();
   }
 
   Future<void> readBlogs({bool withNotifying = true}) async {
@@ -39,11 +39,11 @@ class BlogProvider extends ChangeNotifier {
   }
 
   Future<void> toggleLikeInfo(int blogId) async {
-    print('toggleLikeInfo Triggered from BlogProvider');
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
     blog.isLikedByMe = !blog.isLikedByMe;
     blog.likes += blog.isLikedByMe ? 1 : -1;
-    notifyListeners();
+
+    await readBlogsWithLoadingState();
   }
 
 }

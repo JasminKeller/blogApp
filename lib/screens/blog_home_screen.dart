@@ -1,35 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:blogapp/providers/blog_provider.dart';
+import 'package:blogapp/widget/blog_card_widget.dart';
+import 'package:blogapp/providers/theme_provider.dart';
 
-import '../entity/blog_entity.dart';
-import '../services/blog_repository.dart';
-import '../widget/blog_card_widget.dart';
+import '../theme/theme.dart';
 
 class BlogHomeScreen extends StatelessWidget {
-  BlogHomeScreen({
-    super.key,
-    required this.blogs,
-  });
-
-  final List<Blog> blogs;
-  final BlogRepository blogRepository = BlogRepository.instance;
+  BlogHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: RefreshIndicator(
-        color: Colors.white,
-        backgroundColor: Colors.blue,
-        strokeWidth: 4.0,
+    var blogProvider = Provider.of<BlogProvider>(context);
+    var themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDarkMode = themeProvider.themeData == darkMode;
+
+    if (blogProvider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Bloggy'),
+        actions: [
+          IconButton(
+            icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: () {
+              themeProvider.toggleTheme();
+            },
+          )
+        ],
+      ),
+      body: RefreshIndicator(
         onRefresh: () async {
-          blogRepository.getBlogs();
-          return Future<void>.delayed(const Duration(seconds: 3));
+          await blogProvider.readBlogsWithLoadingState();
         },
         child: ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: blogs!.length,
+          itemCount: blogProvider.blogs.length,
           itemBuilder: (context, index) {
-            return BlogCardWidget(blog: blogs![index]);
+            return BlogCardWidget(blog: blogProvider.blogs[index]);
           },
         ),
       ),
