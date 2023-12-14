@@ -69,9 +69,16 @@ class BlogRepository {
   }
 
   Future<void> updateBlog({required int blogId, required String title, required String content}) async {
-    final blog = _blogs.firstWhere((blog) => blog.id == blogId);
-    blog.title = title;
-    blog.content = content;
+    final blogIndex = _blogs.indexWhere((blog) => blog.id == blogId);
+    if (blogIndex != -1) {
+      final blog = _blogs[blogIndex];
+      blog.title = title;
+      blog.content = content;
+    }
+  }
+
+  Future<Blog> getBlogById(int blogId) async {
+    return _blogs.firstWhere((blog) => blog.id == blogId);
   }
 
 }
