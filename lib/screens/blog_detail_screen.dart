@@ -15,10 +15,14 @@ class BlogDetailPage extends StatefulWidget {
   _BlogDetailPageState createState() => _BlogDetailPageState();
 }
 
+enum _PageStates { loading, ready }
+
 class _BlogDetailPageState extends State<BlogDetailPage> {
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   bool _isEditing = false;
+
+  var pageState = _PageStates.ready;
 
   @override
   void initState() {
@@ -35,92 +39,98 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
     return _contentController.text.length >= 10;
   }
 
+  Future<void> _updateBlog() async {
+    setState(() => pageState = _PageStates.loading);
+    await BlogRepository.instance.updateBlog(
+      blogId: widget.blog.id,
+      title: _titleController.text,
+      content: _contentController.text,
+    );
+    Provider.of<BlogProvider>(context, listen: false).readBlogsWithLoadingState();
+    setState(() => pageState = _PageStates.ready);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: Icon(_isEditing ? Icons.check : Icons.edit),
-            onPressed: () async {
-              if (_isEditing) {
-                if (!_validateTitle()) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Please enter title with 4 or more characters'),
-                  ));
-                  return;
-                }
-                if (!_validateContent()) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Please enter content with 10 or more characters'),
-                  ));
-                  return;
-                }
-                await BlogRepository.instance.updateBlog(
-                  blogId: widget.blog.id,
-                  title: _titleController.text,
-                  content: _contentController.text,
-                );
-                Provider.of<BlogProvider>(context, listen: false).readBlogsWithLoadingState();
-              }
-              setState(() {
-                _isEditing = !_isEditing;
-              });
-            },
+    if (pageState == _PageStates.loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+      } else {
+        return Scaffold(
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                icon: Icon(_isEditing ? Icons.check : Icons.edit),
+                onPressed: () async {
+                  if (_isEditing) {
+                    if (!_validateTitle() || !_validateContent()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(_validateTitle() ? 'Please enter content with 10 or more characters' : 'Please enter title with 4 or more characters'),
+                        ),
+                      );
+                      return;
+                    }
+                    await _updateBlog();
+                  }
+                  setState(() => _isEditing = !_isEditing);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: ListView(
-              children: [
-                _isEditing
-                    ? TextField(
-                  controller: _titleController,
-                  style: Theme.of(context).textTheme.headline6,
-                  autofocus: true,
-                )
-                    : Text(
-                  widget.blog.title,
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                if (!_isEditing)
-                  const SizedBox(height: 20),
-                if (!_isEditing)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: const Image(
-                      image: AssetImage('lib/assets/katze.jpg'),
-                      fit: BoxFit.cover,
-                    ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ListView(
+                  children: [
+                  _isEditing
+                      ? TextField(
+                    controller: _titleController,
+                    style: Theme.of(context).textTheme.headline6,
+                    autofocus: true,
+                  )
+                      : Text(
+                    widget.blog.title,
+                    style: Theme.of(context).textTheme.headline6,
                   ),
-                if (!_isEditing)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(widget.blog.author),
-                        FavoriteIconWidget(blogId: widget.blog.id),
-                      ],
+                  if (!_isEditing)
+                    const SizedBox(height: 20),
+                  if (!_isEditing)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: const Image(
+                        image: AssetImage('lib/assets/katze.jpg'),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                const SizedBox(height: 15),
-                _isEditing
-                    ? TextField(
-                  controller: _contentController,
-                  maxLines: null,
-                )
-                    : Text(widget.blog.content),
-              ],
+                  if (!_isEditing)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(widget.blog.author),
+                          FavoriteIconWidget(blogId: widget.blog.id),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 15),
+                  _isEditing
+                      ? TextField(
+                    controller: _contentController,
+                    maxLines: null,
+                  )
+                      : Text(widget.blog.content),
+                ],
+              ),
+             ),
             ),
           ),
-        ),
-      ),
-    );
+        );
+       }
+    }
   }
-}
 
