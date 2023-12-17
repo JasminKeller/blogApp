@@ -17,6 +17,7 @@ enum _PageStates { loading, editing, done }
 class _BlogAddScreenState extends State<BlogAddScreen> {
   final formKey = GlobalKey<FormState>();
   var pageStates = _PageStates.editing;
+  var id = '123abc';
   var title = '';
   var content = '';
   var author = 'Test User';
@@ -24,13 +25,7 @@ class _BlogAddScreenState extends State<BlogAddScreen> {
   Future<void> _createBlog() async {
     var blogProvider = context.read<BlogProvider>();
     await Future.delayed(const Duration(seconds: 1));
-    await BlogRepository.instance.addBlog(Blog(
-      title: title,
-      content: content,
-      author: author,
-      publishedAt: DateTime.now(),
-    ));
-    blogProvider.readBlogs();
+    await BlogRepository.instance.addBlog(blogProvider, title: title, content: content);
   }
 
   @override

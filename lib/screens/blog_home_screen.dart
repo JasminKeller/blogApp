@@ -15,6 +15,10 @@ class BlogHomeScreen extends StatelessWidget {
     var themeProvider = Provider.of<ThemeProvider>(context);
     bool isDarkMode = themeProvider.themeData == darkMode;
 
+    if (blogProvider.blogs.isEmpty) {
+      blogProvider.fetchAndSetBlogs();
+    }
+
     if (blogProvider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }

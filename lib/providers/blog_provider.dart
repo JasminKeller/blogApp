@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../entity/blog_entity.dart';
+import '../services/blog_api.dart';
 import '../services/blog_repository.dart';
 
 class BlogProvider extends ChangeNotifier {
@@ -38,12 +39,26 @@ class BlogProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> toggleLikeInfo(int blogId) async {
+  Future<void> toggleLikeInfo(String blogId) async {
     final blog = _blogs.firstWhere((blog) => blog.id == blogId);
     blog.isLikedByMe = !blog.isLikedByMe;
     blog.likes += blog.isLikedByMe ? 1 : -1;
 
     await readBlogsWithLoadingState();
+  }
+
+  Future<void> fetchAndSetBlogs() async {
+    isLoading = true;
+    try {
+      BlogApi blogApi = BlogApi.instance;
+      List<Blog> fetchedBlogs = (await blogApi.fetchBlogs());
+      _blogs = fetchedBlogs;
+      isLoading = false;
+    } catch (error) {
+      isLoading = false;
+      rethrow;
+    }
+    notifyListeners();
   }
 
 }

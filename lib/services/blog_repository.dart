@@ -1,74 +1,38 @@
-import 'package:flutter/material.dart';
-import '../entity/blog_entity.dart';
+import 'package:blogapp/providers/blog_provider.dart';
+import 'package:flutter/foundation.dart';
 
-class BlogRepository {
+import '../entity/blog_entity.dart';
+import 'blog_api.dart';
+
+class BlogRepository {       // aka BlogService
   // Static instance + private Constructor for simple Singleton-approach - More here: https://jake-knowledge.notion.site/Singleton-approach-16525cbf251d4739871ecec7cd2913f3?pvs=4
   // Singleton-Muster: Stellt sicher, dass es nur eine Instanz der Klasse gibt
   static BlogRepository instance = BlogRepository._privateConstructor();
   // Privater Konstruktor verhindert die Erstellung weiterer Instanzen
   BlogRepository._privateConstructor();
 
-  int _nextId = 1;
-  bool _isInitialized = false;
 
   final _blogs = <Blog>[];
 
-  void _initializeBlogs() async {
-    addBlog(
-      Blog(
-          id: 8888,
-          title: 'Erster Blog',
-          content: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-          likes: 22,
-          comments: 0,
-          author: 'user@hftm.ch',
-          publishedAt: DateTime(2023, 5, 26)  // Jahr, Monat, Tag
-      ),
-    );
-    addBlog(
-      Blog(id: 8889,
-          title: 'Zweiter Blog',
-          content: 'Das ist der Vorschau.. wuhuuu... Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-          likes: 200,
-          comments: 3,
-          author: 'user@hftm.ch',
-          publishedAt: DateTime(2023, 2, 30)
-      ),
-    );
-    addBlog(
-      Blog(id: 8890,
-          title: 'Dritter Blog',
-          content: 'Das ist der Vorschau.. wuhuuu... Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-          likes: 54,
-          comments: 2,
-          author: 'admin@hftm.ch',
-          publishedAt: DateTime.now().subtract(const Duration(days: 2))
-      ),
-    );
-    _isInitialized = true;
-  }
-
   Future<List<Blog>> getBlogs() async {
-    print('getBlogs called');
-    if (!_isInitialized) {
-      _initializeBlogs();
+    if (kDebugMode) {
+      print('BlogApi.instance.fetchBlogs()');
     }
 
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    return _blogs..sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+    return BlogApi.instance.fetchBlogs();
   }
 
-  Future<void> addBlog(Blog blog) async{
-    blog.id = _nextId++;
-    _blogs.add(blog);
+  Future<void> addBlog(BlogProvider blogProvider, {required String title, required String content,}) async{
+      await BlogApi.instance.addBlog(title: title, content: content);
+      await blogProvider.readBlogsWithLoadingState();
   }
 
-  Future<void> deleteBlog(Blog blog) async {
-    _blogs.remove(blog);
+  Future<void> deleteBlog(BlogProvider blogProvider, String blogId) async {
+    await BlogApi.instance.deleteBlog(blogId: blogId);
+    await blogProvider.readBlogsWithLoadingState();
   }
 
-  Future<void> updateBlog({required int blogId, required String title, required String content}) async {
+  Future<void> updateBlog({required String blogId, required String title, required String content}) async {
     final blogIndex = _blogs.indexWhere((blog) => blog.id == blogId);
     if (blogIndex != -1) {
       final blog = _blogs[blogIndex];

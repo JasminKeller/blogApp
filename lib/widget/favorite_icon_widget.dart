@@ -6,7 +6,7 @@ import '../providers/blog_provider.dart';
 
 
 class FavoriteIconWidget extends StatelessWidget {
-  final int blogId;
+  final String blogId;
 
   const FavoriteIconWidget({
     Key? key,
