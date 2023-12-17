@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../entity/blog_entity.dart';
 import '../services/blog_api.dart';
-import '../services/blog_repository.dart';
 
 class BlogProvider extends ChangeNotifier {
   bool isLoading = false;
@@ -27,13 +26,15 @@ class BlogProvider extends ChangeNotifier {
   Future<void> readBlogsWithLoadingState() async {
     isLoading = true;
     notifyListeners();
-    await readBlogs(withNotifying: false);
+    // await readBlogs(withNotifying: false);
+    _blogs = await BlogApi.instance.fetchBlogs();
     isLoading = false;
     notifyListeners();
   }
 
   Future<void> readBlogs({bool withNotifying = true}) async {
-    _blogs = await BlogRepository.instance.getBlogs();
+    _blogs = await BlogApi.instance.fetchBlogs();
+
     if (withNotifying) {
       notifyListeners();
     }

@@ -86,7 +86,7 @@ class BlogApi {
         "content": content,
       }
     };
-    final response = await http.patch(Uri.parse(_baseUrl), headers: _headers, body: jsonEncode(patchBody));
+    final response = await http.patch(Uri.parse('$_baseUrl/$blogId'), headers: _headers, body: jsonEncode(patchBody));
     if (response.statusCode != 200) {   // 200 = OK
       throw Exception(
           'Failed to update blog. Status code: ${response.statusCode}');

@@ -18,6 +18,7 @@ class BlogDetailPage extends StatefulWidget {
 enum _PageStates { loading, ready }
 
 class _BlogDetailPageState extends State<BlogDetailPage> {
+  Blog? _updatedBlog;
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   bool _isEditing = false;
@@ -41,17 +42,21 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
 
   Future<void> _updateBlog() async {
     setState(() => pageState = _PageStates.loading);
+    var blogProvider = Provider.of<BlogProvider>(context, listen: false);
     await BlogRepository.instance.updateBlog(
+      blogProvider,
       blogId: widget.blog.id,
       title: _titleController.text,
       content: _contentController.text,
     );
-    Provider.of<BlogProvider>(context, listen: false).readBlogsWithLoadingState();
+
+    _updatedBlog = blogProvider.blogs.firstWhere((b) => b.id == widget.blog.id, orElse: () => widget.blog);
     setState(() => pageState = _PageStates.ready);
   }
 
   @override
   Widget build(BuildContext context) {
+    final blogToShow = _updatedBlog ?? widget.blog;
     if (pageState == _PageStates.loading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
@@ -93,7 +98,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     autofocus: true,
                   )
                       : Text(
-                    widget.blog.title,
+                    blogToShow.title,
                     style: Theme.of(context).textTheme.headline6,
                   ),
                   if (!_isEditing)
@@ -112,8 +117,8 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(widget.blog.author),
-                          FavoriteIconWidget(blogId: widget.blog.id),
+                          Text(blogToShow.author),
+                          FavoriteIconWidget(blogId: blogToShow.id),
                         ],
                       ),
                     ),
@@ -123,7 +128,7 @@ class _BlogDetailPageState extends State<BlogDetailPage> {
                     controller: _contentController,
                     maxLines: null,
                   )
-                      : Text(widget.blog.content),
+                      : Text(blogToShow.content),
                 ],
               ),
              ),

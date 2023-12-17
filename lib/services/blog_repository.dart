@@ -32,13 +32,11 @@ class BlogRepository {       // aka BlogService
     await blogProvider.readBlogsWithLoadingState();
   }
 
-  Future<void> updateBlog({required String blogId, required String title, required String content}) async {
-    final blogIndex = _blogs.indexWhere((blog) => blog.id == blogId);
-    if (blogIndex != -1) {
-      final blog = _blogs[blogIndex];
-      blog.title = title;
-      blog.content = content;
-    }
+  Future<void> updateBlog(BlogProvider blogProvider, {required String blogId, required String title, required String content}) async {
+
+      await BlogApi.instance.patchBlog(blogId: blogId, title: title, content: content);
+      await blogProvider.readBlogsWithLoadingState();
+
   }
 
   Future<Blog> getBlogById(int blogId) async {

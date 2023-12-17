@@ -24,7 +24,7 @@ class _BlogAddScreenState extends State<BlogAddScreen> {
 
   Future<void> _createBlog() async {
     var blogProvider = context.read<BlogProvider>();
-    await Future.delayed(const Duration(seconds: 1));
+    // await Future.delayed(const Duration(seconds: 1));
     await BlogRepository.instance.addBlog(blogProvider, title: title, content: content);
   }
 
