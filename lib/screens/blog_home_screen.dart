@@ -26,12 +26,15 @@ class BlogHomeScreen extends StatelessWidget {
         },
       );
     } else {
-      content = ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: blogProvider.blogs.length,
-        itemBuilder: (context, index) {
-          return BlogCardWidget(blog: blogProvider.blogs[index]);
-        },
+      content = Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: blogProvider.blogs.length,
+          itemBuilder: (context, index) {
+            return BlogCardWidget(blog: blogProvider.blogs[index]);
+          },
+        ),
       );
     }
 

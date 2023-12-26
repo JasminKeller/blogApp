@@ -28,17 +28,23 @@ class BlogProvider extends ChangeNotifier {
   }
 
   Future<void> readBlogsWithLoadingState() async {
+    isLoading = true;
+    notifyListeners();
+
     try{
-      isLoading = true;
       _blogs = await BlogApi.instance.fetchBlogs();
       _state = BlogState.loaded;
       notifyListeners();
       isLoading = false;
+
     } catch (e) {
       print(e);
       _state = BlogState.error;
+
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<void> readBlogs({bool withNotifying = true}) async {

@@ -4,6 +4,8 @@
 
 Die BlogApp ist hier erreichbar: [https://blue-desert-0c8b6f803.4.azurestaticapps.net](https://blue-desert-0c8b6f803.4.azurestaticapps.net)
 
+**Wichtiger Hinweis:** Aufgrund von CORS (Cross-Origin Resource Sharing)-Richtlinien ist die Web-App momentan leider nicht funktionsfähig, wenn sie auf Azure Static Web Apps gehostet wird. CORS-Einschränkungen verhindern, dass die App Ressourcen von einem anderen Ursprung (Origin) anfordern kann, was für die vollständige Funktionalität der App notwendig ist. Wir bitten um Ihr Verständnis und Ihre Geduld.
+
 ## Automatisches Update
 
 Dank eines integrierten GitHub Actions Workflows wird die Webseite bei jedem Push auf den `main`-Branch automatisch aktualisiert. Dieser Prozess stellt sicher, dass stets die aktuellste Version der App online ist.
