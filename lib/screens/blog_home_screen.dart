@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:blogapp/providers/blog_provider.dart';
 import 'package:blogapp/widget/blog_card_widget.dart';
 import 'package:blogapp/providers/theme_provider.dart';
-
 import '../theme/theme.dart';
+import '../widget/error_widget.dart';
 
 class BlogHomeScreen extends StatelessWidget {
   BlogHomeScreen({super.key});
@@ -15,12 +15,24 @@ class BlogHomeScreen extends StatelessWidget {
     var themeProvider = Provider.of<ThemeProvider>(context);
     bool isDarkMode = themeProvider.themeData == darkMode;
 
-    if (blogProvider.blogs.isEmpty) {
-      blogProvider.fetchAndSetBlogs();
-    }
+    Widget content;
 
     if (blogProvider.isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      content = const Center(child: CircularProgressIndicator());
+    } else if (blogProvider.state == BlogState.error) {
+      content = CustomErrorWidget(
+        onRetry: () {
+          blogProvider.readBlogsWithLoadingState();
+        },
+      );
+    } else {
+      content = ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: blogProvider.blogs.length,
+        itemBuilder: (context, index) {
+          return BlogCardWidget(blog: blogProvider.blogs[index]);
+        },
+      );
     }
 
     return Scaffold(
@@ -39,13 +51,7 @@ class BlogHomeScreen extends StatelessWidget {
         onRefresh: () async {
           await blogProvider.readBlogsWithLoadingState();
         },
-        child: ListView.builder(
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: blogProvider.blogs.length,
-          itemBuilder: (context, index) {
-            return BlogCardWidget(blog: blogProvider.blogs[index]);
-          },
-        ),
+        child: content,
       ),
     );
   }
